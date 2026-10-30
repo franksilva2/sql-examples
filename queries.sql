@@ -1,14 +1,29 @@
--- All customers
-SELECT * FROM customers;
+USE WAREHOUSE SEDemo;
 
--- Total spent per customer, highest first
-SELECT c.name, SUM(o.total) AS total_spent
-FROM customers c
-JOIN orders o ON o.customer_id = c.id
-GROUP BY c.name
-ORDER BY total_spent DESC;
+-- All orders
+SELECT * FROM orders;
 
--- Orders over $50
-SELECT id, customer_id, total
+-- Total order volume per customer, highest first
+SELECT customer_id, SUM(order_volume) AS total_volume
 FROM orders
-WHERE total > 50;
+GROUP BY customer_id
+ORDER BY total_volume DESC;
+
+-- Total volume per product
+SELECT product_id, SUM(order_volume) AS total_volume
+FROM orders
+GROUP BY product_id
+ORDER BY total_volume DESC;
+
+-- Monthly order volume
+SELECT DATE_TRUNC('month', order_date) AS order_month,
+       SUM(order_volume)               AS total_volume
+FROM orders
+GROUP BY order_month
+ORDER BY order_month;
+
+-- Large orders (volume of 5 or more)
+SELECT order_id, customer_id, product_id, order_volume
+FROM orders
+WHERE order_volume >= 5
+ORDER BY order_volume DESC;
